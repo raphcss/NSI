@@ -293,7 +293,7 @@ class Power4(tk.Tk):
         with open("config/config.json", "w") as f:
             json.dump(config, f, indent=4)
 
-        self.show_winner()
+        self.check_winner()
     # Fonction pour afficher un aperçu de l'emplacement où le joueur pose son pion
     def preview(self, event):
         # Supprimer tout cercle précédemment dessiné
@@ -486,14 +486,14 @@ class Power4(tk.Tk):
                         self.restart_game()
                     else: 
                         self.save_logs()
-                        sys.exit()
+                        return sys.exit()
 
-
+        
         message = f"Le joueur {self.team_colors[self.winner-1]} a gagné !"
         # Boîte de dialogue pour demander si l'utilisateur souhaite quitter le jeu
         finie = tk.messagebox.askquestion(message,'La partie est finie, souhaites-tu quitter le jeu ?',icon = 'info')
         if finie == 'yes':
-            savemessage_draw = "C'est une égalité ! Personne n'a gagné."
+            savemessage_draw = f"Le joueur {self.team_colors[self.winner-1]} a gagné !"
             save_draw = tk.messagebox.askquestion(savemessage_draw, 'Souhaites-tu sauvegarder ta partie ?',icon = "info")
             if save_draw == 'yes':
                 self.save_party()
@@ -519,7 +519,6 @@ class Power4(tk.Tk):
                 if replay_draw == "yes":
                     self.restart_game()
                 else: 
-                    self.save_logs()
                     sys.exit()
 
 # Vérification pour exécuter le jeu uniquement si ce fichier est le fichier principal
