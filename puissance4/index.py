@@ -1,3 +1,6 @@
+# test
+
+
 # Import des modules nécessaires pour le programme
 import csv
 import datetime as time
@@ -14,6 +17,13 @@ class StartPage(tk.Tk):
     def __init__(self, *args, **kwargs):
         # Appel du constructeur de la classe parente tk.Tk
         tk.Tk.__init__(self, *args, **kwargs)
+
+        config = { 
+                "start_from_old_path": "null",
+                "start_from_old_check" : "False"
+        }
+        with open("config/config.json", "w") as f:
+            json.dump(config, f, indent=4)
 
         with open("config/count.json", 'r') as f:
             data = json.loads(f.read().replace("\n", ""))
@@ -95,7 +105,6 @@ class StartPage(tk.Tk):
         # Ouverture d'une boîte de dialogue "Ouvrir" pour sélectionner un fichier CSV
         file_path = filedialog.askopenfilename(initialdir="saves/", defaultextension=".csv", filetypes=[("Fichier CSV (P4 Logs)", "*.csv")])
         # Destruction de la fenêtre actuelle
-        self.destroy()
         # Vérifier si un fichier a été sélectionné
         if file_path:
             # Traitement du fichier CSV sélectionné ici
@@ -109,9 +118,8 @@ class StartPage(tk.Tk):
             
 
         else:
-            print("No file selected")
-            return StartPage()
-
+            return
+        self.destroy()
 # Création de l'objet StartPage
 app = StartPage()
 # Boucle principale de l'application
@@ -253,6 +261,15 @@ class Power4(tk.Tk):
                     x2 = x1 + 75
                     y2 = y1 + 75
                     self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline=border_color)
+                self.winner = self.check_winner()
+
+        # si un gagnant a été trouvé, afficher le message de gagnant et désactiver les clics sur le canvas
+        if self.winner is not None:
+            # Retirer les liasons
+            self.canvas.unbind("<Button-1>")
+
+            self.title(f"Puissance 4 - Bravo au joueur {self.team_colors[self.player]} pour sa victoire !")
+            self.log(f"[PUISSANCE 4] Player {self.team_colors[self.player]} winned the game")
     # Fonction permettant de lancer une partie depuis un fichier csv dit save
     def open_party(self):
         with open(self.imported_path, newline='') as file:
@@ -272,6 +289,7 @@ class Power4(tk.Tk):
         with open("config/config.json", "w") as f:
             json.dump(config, f, indent=4)
 
+        self.show_winner()
     # Fonction pour afficher un aperçu de l'emplacement où le joueur pose son pion
     def preview(self, event):
         # Supprimer tout cercle précédemment dessiné
@@ -337,7 +355,7 @@ class Power4(tk.Tk):
         y2 = y1 + 75
 
         # dessiner un cercle sur le canvas en utilisant les coordonnées et la couleur correspondant au joueur courant
-        self.canvas.create_oval(x1, y1, x2, y2, outline=self.border_colors[self.player], fill=self.player_colors[self.player])
+        self.canvas.create_oval(x1, y1, x2, y2, outline=self.border_colors[self.player], fill=self.player_colors[self.player], tags="pawns")
         self.log(f"[PUISSANCE 4] Pawn placed at {row+1}x{column+1} by {self.team_colors[self.player]}")
 
         
@@ -352,7 +370,9 @@ class Power4(tk.Tk):
 
         # si un gagnant a été trouvé, afficher le message de gagnant et désactiver les clics sur le canvas
         if self.winner is not None:
-            self.unbind("<Button-1>")
+            # Retirer les liasons
+            self.canvas.unbind("<Button-1>")
+
             self.title(f"Puissance 4 - Bravo au joueur {self.team_colors[self.player]} pour sa victoire !")
             self.log(f"[PUISSANCE 4] Player {self.team_colors[self.player]} winned the game")
             self.show_winner()
@@ -392,23 +412,31 @@ class Power4(tk.Tk):
 
     def restart_game(self):
         # Réinitialiser les valeurs par défaut
-        self.squares = []
         self.player = 0
         self.winner = None
         self.check_used_places = 0
+        self.squares = []
+        self.grid = []
 
-        # Réinitialiser le tableau avec des zéros
+        # Initialiser le tableau avec des zéros
+        self.log("[INFO] Save method initiated")
         for i in range(self.columns):
             self.squares.append([0] * self.rows)
 
         # Effacer les cercles sur le canvas
         self.canvas.delete("all")
-
-        # Récréer la grille pour le jeu
+        # Recréer le tableau
         self.create_grid()
-
         # Ré-activer les clics sur le canvas
-        self.bind("<Button-1>", self.click)
+        # Lier l'événement de clic de souris à la méthode "click"
+        self.canvas.bind("<Button-1>", self.click)
+
+        config = { 
+                "start_from_old_path": "null",
+                "start_from_old_check" : "False"
+        }
+        with open("config/config.json", "w") as f:
+            json.dump(config, f, indent=4)
 
 
     def save_party(self):
@@ -417,7 +445,6 @@ class Power4(tk.Tk):
         hour = hour.strftime("%Hh%Mm%Ss")
         with open(f"saves/{date}_{hour}.csv",'w', encoding='UTF8', newline='' ) as f:
             writter = csv.writer(f)
-            print(self.squares)
             for i in self.squares:
                 writter.writerow(i)
                 #writter.writerow([self.player,self.winner])
@@ -435,37 +462,61 @@ class Power4(tk.Tk):
                     self.save_logs()
                     sys.exit()
                 # Quitter le jeu
+                self.save_logs()
                 sys.exit()
             else:
-                rejouer_draw = tk.messagebox.askquestion('Puissance 4','Souhaite-tu rejouer ?',icon = 'info')
-                if rejouer_draw == 'yes':
+                save_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu sauvegarder ta partie ?',icon = 'info')
+                if save_draw == 'yes':
+                    self.save_party()
                     self.save_logs()
-                    self.restart_game()
+                    replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
+                    if replay_draw == "yes":
+                        self.restart_game()
+                    else: 
+                        self.save_logs()
+                        sys.exit()
                 else:
-                    sys.exit()
+                    self.save_logs()
+                    replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
+                    if replay_draw == "yes":
+                        self.restart_game()
+                    else: 
+                        self.save_logs()
+                        sys.exit()
+
 
         message = f"Le joueur {self.team_colors[self.winner-1]} a gagné !"
         # Boîte de dialogue pour demander si l'utilisateur souhaite quitter le jeu
         finie = tk.messagebox.askquestion(message,'La partie est finie, souhaites-tu quitter le jeu ?',icon = 'info')
         if finie == 'yes':
-            save_draw = tk.messagebox.askquestion(message, 'Souhaites-tu sauvegarder ta partie ?',icon = "info")
+            savemessage_draw = "C'est une égalité ! Personne n'a gagné."
+            save_draw = tk.messagebox.askquestion(savemessage_draw, 'Souhaites-tu sauvegarder ta partie ?',icon = "info")
             if save_draw == 'yes':
-                self.save_logs()
                 self.save_party()
+                self.save_logs()
                 sys.exit()
+            # Quitter le jeu
             self.save_logs()
             sys.exit()
         else:
-            # Boîte de dialogue pour demander si l'utilisateur souhaite rejouer
-            rejouer = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
-            if rejouer == 'yes':
-                # Redémarrer la partie
+            save_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu sauvegarder ta partie ?',icon = 'info')
+            if save_draw == 'yes':
+                self.save_party()
                 self.save_logs()
-                self.restart_game()
+                replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
+                if replay_draw == "yes":
+                    self.restart_game()
+                else: 
+                    self.save_logs()
+                    sys.exit()
             else:
-                # Quitter le jeu
                 self.save_logs()
-                sys.exit()
+                replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
+                if replay_draw == "yes":
+                    self.restart_game()
+                else: 
+                    self.save_logs()
+                    sys.exit()
 
 # Vérification pour exécuter le jeu uniquement si ce fichier est le fichier principal
 if __name__ == "__main__":
