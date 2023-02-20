@@ -1,0 +1,11 @@
+
+[INFO] Creating grid...
+[PUISSANCE 4] Pawn placed at 6x7 by rouge
+[PUISSANCE 4] Pawn placed at 5x7 by jaune
+[PUISSANCE 4] Pawn placed at 6x6 by rouge
+[PUISSANCE 4] Pawn placed at 5x6 by jaune
+[PUISSANCE 4] Pawn placed at 6x5 by rouge
+[PUISSANCE 4] Pawn placed at 5x5 by jaune
+[PUISSANCE 4] Pawn placed at 6x4 by rouge
+[PUISSANCE 4] Player rouge winned the game
+[INFO] Game saved and closed correctly

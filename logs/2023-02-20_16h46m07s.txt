@@ -1,0 +1,11 @@
+
+[INFO] Creating grid...
+[INFO] New game started
+
+[INFO] Save method initiated
+[PUISSANCE 4] Pawn placed at 6x3 by rouge
+[PUISSANCE 4] Pawn placed at 5x3 by jaune
+[PUISSANCE 4] Pawn placed at 6x2 by rouge
+[PUISSANCE 4] Pawn placed at 6x1 by jaune
+[INFO] The current party was closed during the game. Saving logs and data..
+[INFO] Game saved and closed correctly

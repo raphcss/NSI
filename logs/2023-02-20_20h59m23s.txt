@@ -1,0 +1,28 @@
+
+[INFO] Creating grid...
+[INFO] Game started from an old game save. (C:/Users/Raph'/Desktop/puissance4/saves/2023-02-15_14h40m13s.csv)
+
+[INFO] Drawing the pawns of the imported saved game
+[PUISSANCE 4] Red pawn placed at 4x1 by the import method
+[PUISSANCE 4] Yellow pawn placed at 5x1 by the import method
+[PUISSANCE 4] Red pawn placed at 5x2 by the import method
+[PUISSANCE 4] Red pawn placed at 5x7 by the import method
+[PUISSANCE 4] Red pawn placed at 6x1 by the import method
+[PUISSANCE 4] Yellow pawn placed at 6x2 by the import method
+[PUISSANCE 4] Yellow pawn placed at 6x3 by the import method
+[PUISSANCE 4] Red pawn placed at 6x4 by the import method
+[PUISSANCE 4] Yellow pawn placed at 6x5 by the import method
+[PUISSANCE 4] Yellow pawn placed at 6x7 by the import method
+[PUISSANCE 4] Pawn placed at 6x6 by rouge
+[PUISSANCE 4] Pawn placed at 5x5 by jaune
+[PUISSANCE 4] Pawn placed at 5x4 by rouge
+[PUISSANCE 4] Pawn placed at 5x3 by jaune
+[PUISSANCE 4] Pawn placed at 4x2 by rouge
+[PUISSANCE 4] Pawn placed at 3x1 by jaune
+[PUISSANCE 4] Pawn placed at 3x2 by rouge
+[PUISSANCE 4] Pawn placed at 4x3 by jaune
+[PUISSANCE 4] Pawn placed at 4x4 by rouge
+[PUISSANCE 4] Pawn placed at 4x5 by jaune
+[PUISSANCE 4] Pawn placed at 3x4 by rouge
+[PUISSANCE 4] Player rouge winned the game
+[INFO] Game saved and closed correctly

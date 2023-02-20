@@ -1,0 +1,14 @@
+
+[INFO] Creating grid...
+[INFO] New game started
+
+[INFO] Save method initiated
+[PUISSANCE 4] Pawn placed at 6x3 by rouge
+[PUISSANCE 4] Pawn placed at 6x4 by jaune
+[PUISSANCE 4] Pawn placed at 5x3 by rouge
+[PUISSANCE 4] Pawn placed at 5x4 by jaune
+[PUISSANCE 4] Pawn placed at 4x3 by rouge
+[PUISSANCE 4] Pawn placed at 4x4 by jaune
+[PUISSANCE 4] Pawn placed at 3x3 by rouge
+[PUISSANCE 4] Player rouge winned the game
+[INFO] Game saved and closed correctly
