@@ -80,6 +80,13 @@ class StartPage(tk.Tk):
         self.charger_label = tk.Label(self.frame, text="Made by Raphaël L.", font=("Helvetica", 10), bg="#80c1ff", fg="#6290bf")
         self.charger_label.pack(pady=10)
 
+        self.menu_bar = tk.Menu(self.master)
+        self.config(menu=self.menu_bar)
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=False)
+        self.menu_bar.add_cascade(label="Fichier", menu=self.file_menu)
+        self.file_menu.add_command(label="Ouvrir", command=self.visio)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Comming soon..", command=self.force_pass)
         def force_quit():
             quit = tk.messagebox.askquestion("Puissance 4", 'Es-tu sur de vouloir quitter le launcher ?',icon = "info")
             if quit == 'yes':
@@ -87,6 +94,40 @@ class StartPage(tk.Tk):
             return
         # Faire en sorte de demander aux joueurs si il souhaites sauvgarder avant de quitter
         self.wm_protocol ("WM_DELETE_WINDOW", force_quit)
+    def force_pass(self):
+        pass
+    def visio(self):
+        def open_file():
+            file_path = filedialog.askopenfilename(initialdir="logs/", filetypes=[("Fichiers texte", "*.txt")])
+            if file_path:
+                with open(file_path, "r") as file:
+                    content = file.read()
+                    text.config(state='normal')
+                    text.delete(1.0, tk.END)
+                    text.insert(tk.END, content)
+                    text.config(state='disabled')
+
+        def quit_app():
+            root.quit()
+
+        root = tk.Tk()
+        root.title("Puissance 4 - Visionneur de logs")
+
+        # Création de la zone de texte
+        text = tk.Text(root, wrap="word")
+        text.pack(fill="both", expand=True)
+        text.insert(1.0, "Aucun fichier LOG ouvert")
+
+        # Création du menu
+        menu_bar = tk.Menu(root)
+        root.config(menu=menu_bar)
+        file_menu = tk.Menu(menu_bar, tearoff=False)
+        menu_bar.add_cascade(label="Fichier", menu=file_menu)
+        file_menu.add_command(label="Ouvrir", command=open_file)
+        file_menu.add_separator()
+        file_menu.add_command(label="Quitter", command=quit_app)
+
+        root.mainloop()
         
     def counter(self):
         count = 0
