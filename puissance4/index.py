@@ -1,5 +1,9 @@
-# test
+'''
+Code créer par Raphaël LEROU--LEMOINE, terminé le 15/02/2023.
 
+Ce code permet tout d'abord d'afficher une première fenêtre dite "launcher" qui aura pour but de nous laisser le choix entre deux possibilitées, créer ou charger un partie de puissance 4,
+le reste du code permet tout simplement le bon déroulement de la partie
+'''
 
 # Import des modules nécessaires pour le programme
 import csv
