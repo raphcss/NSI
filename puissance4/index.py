@@ -83,8 +83,8 @@ class StartPage(tk.Tk):
         self.menu_bar = tk.Menu(self.master)
         self.config(menu=self.menu_bar)
         self.file_menu = tk.Menu(self.menu_bar, tearoff=False)
-        self.menu_bar.add_cascade(label="Fichier", menu=self.file_menu)
-        self.file_menu.add_command(label="Ouvrir", command=self.visio)
+        self.menu_bar.add_cascade(label="Outils", menu=self.file_menu)
+        self.file_menu.add_command(label="Visionneur", command=self.visio)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Comming soon..", command=self.force_pass)
         def force_quit():
