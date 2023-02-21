@@ -11,6 +11,7 @@ import datetime as time
 import json
 import os
 import sys
+import asyncio
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -94,41 +95,50 @@ class StartPage(tk.Tk):
             return
         # Faire en sorte de demander aux joueurs si il souhaites sauvgarder avant de quitter
         self.wm_protocol ("WM_DELETE_WINDOW", force_quit)
+    #Définition de la fonction force_pass qui ne fait rien
     def force_pass(self):
         pass
+    #Définition de la fonction visio qui permet d'ouvrir un fichier texte, de l'afficher dans une zone de texte
+    #et de proposer un menu pour fermer l'application
     def visio(self):
+        # Définition de la fonction open_file pour ouvrir un fichier et l'afficher dans la zone de texte
         def open_file():
+            # Ouverture de la boîte de dialogue pour choisir un fichier
             file_path = filedialog.askopenfilename(initialdir="logs/", filetypes=[("Fichiers texte", "*.txt")])
             if file_path:
+                # Si un fichier a été choisi, ouverture du fichier et affichage dans la zone de texte
                 with open(file_path, "r") as file:
                     content = file.read()
                     text.config(state='normal')
                     text.delete(1.0, tk.END)
                     text.insert(tk.END, content)
                     text.config(state='disabled')
-
+        # Définition de la fonction quit_app pour fermer l'application
         def quit_app():
-            root.quit()
+            visionneur.quit()
 
-        root = tk.Tk()
-        root.title("Puissance 4 - Visionneur de logs")
+        # Création de la fenêtre principale de l'application
+        visionneur = tk.Tk()
+        visionneur.title("Puissance 4 - Visionneur de logs")
 
-        # Création de la zone de texte
-        text = tk.Text(root, wrap="word")
+        # Création de la zone de texte pour afficher le contenu des fichiers
+        text = tk.Text(visionneur, wrap="word")
         text.pack(fill="both", expand=True)
         text.insert(1.0, "Aucun fichier LOG ouvert")
+        text.config(state='disabled')
 
-        # Création du menu
-        menu_bar = tk.Menu(root)
-        root.config(menu=menu_bar)
+        # Création du menu pour ouvrir un fichier et fermer l'application
+        menu_bar = tk.Menu(visionneur)
+        visionneur.config(menu=menu_bar)
         file_menu = tk.Menu(menu_bar, tearoff=False)
         menu_bar.add_cascade(label="Fichier", menu=file_menu)
         file_menu.add_command(label="Ouvrir", command=open_file)
         file_menu.add_separator()
         file_menu.add_command(label="Quitter", command=quit_app)
 
-        root.mainloop()
-        
+        # Lancement de la boucle principale de l'application
+        visionneur.mainloop()
+    #Définition de la fonction counter pour compter le nombre de parties jouées
     def counter(self):
         count = 0
         with open("config/count.json", 'r') as f:
@@ -283,29 +293,41 @@ class Power4(tk.Tk):
                 self.canvas.create_rectangle(x1, y1, x2, y2, outline="#4285F4", fill="#80c1ff")
 
     def draw_pieces(self):
+        # Affiche un message de journalisation pour indiquer que les pions de la partie sauvegardée sont dessinés
         self.log("[INFO] Drawing the pawns of the imported saved game")
         for i in range(self.rows):
             for j in range(self.columns):
                 if self.grid[i][j] == 1:
+                    # Affiche un message de journalisation pour indiquer le placement d'un pion rouge
                     self.log(f"[PUISSANCE 4] Red pawn placed at {i+1}x{j+1} by the import method")
+                    # Incrémente le nombre de places utilisées
                     self.check_used_places = self.check_used_places + 1
+                    # Définit les couleurs du pion rouge
                     color = "firebrick1"
                     border_color = "brown3"
+                    # Calcule les coordonnées du cercle représentant le pion rouge
                     x1 = j * 75 
                     y1 = i * 75 
                     x2 = x1 + 75
                     y2 = y1 + 75
+                    # Dessine le cercle représentant le pion rouge
                     self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline=border_color)
                 if self.grid[i][j] == 2:
+                    # Affiche un message de journalisation pour indiquer le placement d'un pion jaune
                     self.log(f"[PUISSANCE 4] Yellow pawn placed at {i+1}x{j+1} by the import method")
+                    # Incrémente le nombre de places utilisées
                     self.check_used_places = self.check_used_places + 1
+                    # Définit les couleurs du pion jaune
                     color = "goldenrod1"
                     border_color = "gold"
+                    # Calcule les coordonnées du cercle représentant le pion jaune
                     x1 = j * 75 
                     y1 = i * 75 
                     x2 = x1 + 75
                     y2 = y1 + 75
+                    # Dessine le cercle représentant le pion jaune
                     self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline=border_color)
+                # Appelle la fonction pour vérifier s'il y a un gagnant dans le jeu
                 self.winner = self.check_winner()
 
         # si un gagnant a été trouvé, afficher le message de gagnant et désactiver les clics sur le canvas
@@ -317,24 +339,36 @@ class Power4(tk.Tk):
             self.log(f"[PUISSANCE 4] Player {self.team_colors[self.player]} winned the game")
     # Fonction permettant de lancer une partie depuis un fichier csv dit save
     def open_party(self):
-        with open(self.imported_path, newline='') as file:
-            reader = csv.reader(file)
-            grid = list(reader)
-            grid = [[int(grid[j][i]) for j in range(len(grid))] for i in range(len(grid[0]))]
-            self.squares = [[grid[j][i] for j in range(len(grid))] for i in range(len(grid[0]))]
-            self.grid = grid
-        self.draw_pieces()
-        self.player = (self.check_used_places) % 2
+            # Ouverture du fichier .csv contenant la grille sauvegardée précédemment
+            with open(self.imported_path, newline='') as file:
+                reader = csv.reader(file)
+                grid = list(reader)
+
+                # Conversion de la grille en liste d'entiers
+                grid = [[int(grid[j][i]) for j in range(len(grid))] for i in range(len(grid[0]))]
+
+                # Enregistrement de la grille
+                self.squares = [[grid[j][i] for j in range(len(grid))] for i in range(len(grid[0]))]
+                self.grid = grid
             
+            # Dessin des pions sur le canvas
+            self.draw_pieces()
 
-        config = { 
-                "start_from_old_path": "null",
-                "start_from_old_check" : "False"
-            }
-        with open("config/config.json", "w") as f:
-            json.dump(config, f, indent=4)
+            # Détermination du joueur courant
+            self.player = (self.check_used_places) % 2
 
-        self.check_winner()
+            # Configuration par défaut
+            config = { 
+                    "start_from_old_path": "null",
+                    "start_from_old_check" : "False"
+                }
+
+            # Sauvegarde de la configuration par défaut dans le fichier config.json
+            with open("config/config.json", "w") as f:
+                json.dump(config, f, indent=4)
+
+            # Vérification si un joueur a gagné
+            self.check_winner()
     # Fonction pour afficher un aperçu de l'emplacement où le joueur pose son pion
     def preview(self, event):
         # Supprimer tout cercle précédemment dessiné
@@ -494,15 +528,18 @@ class Power4(tk.Tk):
                 writter.writerow(i)
                 #writter.writerow([self.player,self.winner])
 
-    # Fonction qui affiche le gagnant de la partie
+    #Définition d'une méthode pour afficher le gagnant
     def show_winner(self):
         if self.winner == "draw":
+            # Si la partie est nulle, afficher un message et demander à l'utilisateur s'il veut quitter ou rejouer
             message_draw = "C'est une égalité ! Personne n'a gagné."
             finie_draw = tk.messagebox.askquestion(message_draw,'La partie est finie, souhaite-tu quitter le jeu ?',icon = 'info')
             if finie_draw == 'yes':
+                # Si l'utilisateur veut quitter, demander s'il veut sauvegarder la partie et quitter
                 savemessage_draw = "C'est une égalité ! Personne n'a gagné."
                 save_draw = tk.messagebox.askquestion(savemessage_draw, 'Souhaites-tu sauvegarder ta partie ?',icon = "info")
                 if save_draw == 'yes':
+                    # Si l'utilisateur veut sauvegarder la partie et quitter, enregistrer les informations de la partie et quitter
                     self.save_party()
                     self.save_logs()
                     sys.exit()
@@ -510,33 +547,37 @@ class Power4(tk.Tk):
                 self.save_logs()
                 sys.exit()
             else:
+                # Si l'utilisateur veut rejouer, demander s'il veut sauvegarder la partie et rejouer, sinon quitter
                 save_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu sauvegarder ta partie ?',icon = 'info')
                 if save_draw == 'yes':
+                    # Si l'utilisateur veut sauvegarder la partie et rejouer, enregistrer les informations de la partie et redémarrer la partie
                     self.save_party()
                     self.save_logs()
                     replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
                     if replay_draw == "yes":
                         self.restart_game()
                     else: 
+                        # Si l'utilisateur ne veut pas rejouer, enregistrer les informations de la partie et quitter
                         self.save_logs()
                         sys.exit()
                 else:
+                    # Si l'utilisateur ne veut pas sauvegarder la partie, demander s'il veut rejouer, sinon quitter
                     self.save_logs()
                     replay_draw = tk.messagebox.askquestion('Puissance 4','Souhaites-tu rejouer ?',icon = 'info')
                     if replay_draw == "yes":
                         self.restart_game()
                     else: 
-                        self.save_logs()
-                        return sys.exit()
-
+                        # Si l'utilisateur ne veut pas rejouer, quitter
+                        sys.exit()
         
+        # Si un joueur a gagné, afficher un message avec la couleur du joueur gagnant et demander à l'utilisateur s'il veut quitter ou rejouer
         message = f"Le joueur {self.team_colors[self.winner-1]} a gagné !"
-        # Boîte de dialogue pour demander si l'utilisateur souhaite quitter le jeu
         finie = tk.messagebox.askquestion(message,'La partie est finie, souhaites-tu quitter le jeu ?',icon = 'info')
         if finie == 'yes':
             savemessage_draw = f"Le joueur {self.team_colors[self.winner-1]} a gagné !"
             save_draw = tk.messagebox.askquestion(savemessage_draw, 'Souhaites-tu sauvegarder ta partie ?',icon = "info")
             if save_draw == 'yes':
+                # Si l'utilisateur veut sauvegarder la partie et quitter, enregistrer les informations de la partie et quitter
                 self.save_party()
                 self.save_logs()
                 sys.exit()
