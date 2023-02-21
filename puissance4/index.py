@@ -327,16 +327,6 @@ class Power4(tk.Tk):
                     y2 = y1 + 75
                     # Dessine le cercle représentant le pion jaune
                     self.canvas.create_oval(x1, y1, x2, y2, fill=color, outline=border_color)
-                # Appelle la fonction pour vérifier s'il y a un gagnant dans le jeu
-                self.winner = self.check_winner()
-
-        # si un gagnant a été trouvé, afficher le message de gagnant et désactiver les clics sur le canvas
-        if self.winner is not None:
-            # Retirer les liasons
-            self.canvas.unbind("<Button-1>")
-
-            self.title(f"Puissance 4 - Bravo au joueur {self.team_colors[self.player]} pour sa victoire !")
-            self.log(f"[PUISSANCE 4] Player {self.team_colors[self.player]} winned the game")
     # Fonction permettant de lancer une partie depuis un fichier csv dit save
     def open_party(self):
             # Ouverture du fichier .csv contenant la grille sauvegardée précédemment
@@ -367,8 +357,22 @@ class Power4(tk.Tk):
             with open("config/config.json", "w") as f:
                 json.dump(config, f, indent=4)
 
-            # Vérification si un joueur a gagné
-            self.check_winner()
+            if self.check_used_places == 42:
+                self.winner = "draw"
+                self.show_winner()
+
+            # vérifier s'il y a un gagnant en utilisant la fonction check_winner()
+            self.winner = self.check_winner()
+
+            # si un gagnant a été trouvé, afficher le message de gagnant et désactiver les clics sur le canvas
+            if self.winner is not None:
+                # Retirer les liasons
+                self.canvas.unbind("<Button-1>")
+
+                self.title(f"Puissance 4 - Bravo au joueur {self.team_colors[self.player]} pour sa victoire !")
+                self.log(f"[PUISSANCE 4] Player {self.team_colors[self.player]} winned the game")
+                self.show_winner()
+
     # Fonction pour afficher un aperçu de l'emplacement où le joueur pose son pion
     def preview(self, event):
         # Supprimer tout cercle précédemment dessiné
