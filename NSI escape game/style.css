@@ -1,6 +1,6 @@
 /* Définit la couleur de fond de la page */
 body {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
   }
   
   /* Style du header */
@@ -10,13 +10,15 @@ body {
     align-items: center;
     padding: 20px 40px;
     background-color: #fff;
-    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+    box-shadow: 0 1px 6px rgba(236, 237, 240, 0);
   }
-  
+
   /* Style du logo Google */
-  header img {
-    height: 35px;
+  main img {
+    height: 100px;
     margin-right: 10px;
+    display: flex;
+    margin: 125px auto;
   }
   
   /* Style des liens de navigation */
@@ -24,6 +26,8 @@ body {
     list-style: none;
     display: flex;
     align-items: center;
+    position: fixed;
+    right: 0;
   }
   
   nav li {
@@ -43,7 +47,7 @@ body {
   
   /* Style du formulaire de recherche */
   main form {
-    margin: 100px auto;
+    margin: -75px auto;
     max-width: 800px;
     display: flex;
     justify-content: center;
@@ -51,12 +55,17 @@ body {
   }
   
   main input[type="text"] {
+    position: flex;
     padding: 10px 20px;
     border: none;
     border-radius: 24px;
     box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
     font-size: 16px;
     width: 500px;
+  }
+
+  main input[type="text"]::placeholder {
+    color: rgb(180, 179, 179);
   }
   
   main button[type="submit"],
@@ -78,13 +87,16 @@ body {
   }
   
   main button[type="submit"] {
-    border: 1px solid #dadce0;
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.212);
   }
   
   /* Style de la liste des langues */
   .languages {
     margin-top: 20px;
     text-align: center;
+    position: absolute;
+    width: 100%; height: 50px;
+    bottom: 100px; left: 0; right: 0;
   }
   
   .languages p {
@@ -119,9 +131,12 @@ body {
   
   /* Style du footer */
   footer {
-    background-color: #f2f2f2;
-    padding: 20px;
+    background-color: #faf8f8;
+    padding: 0px;
     text-align: center;
+    position: absolute;
+    width: 100%; height: 50px;
+    bottom: 0px; left: 0; right: 0;
   }
   
   footer ul {
@@ -129,7 +144,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0;
+    margin: -10;
     padding: 0;
   }
   
